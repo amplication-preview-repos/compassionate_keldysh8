@@ -1,0 +1,89 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DB_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model Appointment {
+  createdAt  DateTime               @default(now())
+  customer   String?
+  date       DateTime?
+  employee   Employee?              @relation(fields: [employeeId], references: [id])
+  employeeId String?
+  id         String                 @id @default(cuid())
+  payments   Payment[]
+  service    Service?               @relation(fields: [serviceId], references: [id])
+  serviceId  String?
+  status     EnumAppointmentStatus?
+  updatedAt  DateTime               @updatedAt
+}
+
+model Service {
+  appointments Appointment[]
+  createdAt    DateTime      @default(now())
+  description  String?
+  duration     Int?
+  id           String        @id @default(cuid())
+  name         String?
+  price        Float?
+  updatedAt    DateTime      @updatedAt
+}
+
+model Employee {
+  appointments Appointment[]
+  createdAt    DateTime      @default(now())
+  email        String?
+  id           String        @id @default(cuid())
+  name         String?
+  phone        String?
+  position     String?
+  updatedAt    DateTime      @updatedAt
+}
+
+model Customer {
+  createdAt DateTime @default(now())
+  email     String?
+  id        String   @id @default(cuid())
+  name      String?
+  phone     String?
+  updatedAt DateTime @updatedAt
+}
+
+model Statistics {
+  createdAt DateTime  @default(now())
+  date      DateTime?
+  id        String    @id @default(cuid())
+  metrics   Json?
+  updatedAt DateTime  @updatedAt
+}
+
+model Payment {
+  amount        Float?
+  appointment   Appointment?       @relation(fields: [appointmentId], references: [id])
+  appointmentId String?
+  createdAt     DateTime           @default(now())
+  date          DateTime?
+  id            String             @id @default(cuid())
+  method        EnumPaymentMethod?
+  updatedAt     DateTime           @updatedAt
+}
+
+model Inventory {
+  createdAt DateTime @default(now())
+  id        String   @id @default(cuid())
+  itemName  String?
+  price     Float?
+  quantity  Int?
+  updatedAt DateTime @updatedAt
+}
+
+enum EnumAppointmentStatus {
+  Option1
+}
+
+enum EnumPaymentMethod {
+  Option1
+}
